@@ -14,6 +14,7 @@
       var api = "https://la1.api.riotgames.com"
       var apiKey = "?api_key=RGAPI-e5f6010f-404b-438b-8f68-76f034dfa4a6";
       var xhttp = new XMLHttpRequest();
+      xhttp.withCredentials = true;
       xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
           cb(this.response);
@@ -22,7 +23,9 @@
       xhttp.open("GET", api+url+apiKey)
       //xhttp.setRequestHeader("X-Riot-Token", "RGAPI-e5f6010f-404b-438b-8f68-76f034dfa4a6");
       console.log(xhttp)
-      xhttp.send();
+      xhttp.setRequestHeader("cache-control", "no-cache");
+      xhttp.setRequestHeader("Postman-Token", "a0b14afd-da2e-492a-ab2b-e1518ae53ff0");
+      xhttp.send(null);
     }
 
     function mostrarDatos(response) {
