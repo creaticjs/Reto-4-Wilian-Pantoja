@@ -42,6 +42,7 @@
         }
       }
       xhttp.open("GET", api+url);
+      xhttp.setRequestHeader("Access-Control-Allow-Origin", "*");
       xhttp.send(null);
     }
     get2("/", mostrarDatos);
