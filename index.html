@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    var usuario;
+    
+    function get(url, cb) {
+      var api = "https://la1.api.riotgames.com"
+      var apiKey = "?api_key=RGAPI-e5f6010f-404b-438b-8f68-76f034dfa4a6";
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          cb(this.response);
+        }
+      }
+      xhttp.open("GET", api+url+apiKey)
+      //xhttp.setRequestHeader("X-Riot-Token", "RGAPI-e5f6010f-404b-438b-8f68-76f034dfa4a6");
+      xhttp.setRequestHeader("Origin", "http://evil.com/");
+      xhttp.setRequestHeader("Accept-Charset", "application/x-www-form-urlencoded; charset=UTF-8");
+      xhttp.setRequestHeader("Accept-Language", "es-419,es;q=0.9,en;q=0.8");
+      xhttp.setRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36");
+      console.log(xhttp)
+      xhttp.send();
+
+      var data = null;
+
+var xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === 4) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("GET", "https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/RiotSchmick?api_key=RGAPI-e5f6010f-404b-438b-8f68-76f034dfa4a6");
+xhr.setRequestHeader("cache-control", "no-cache");
+xhr.setRequestHeader("Postman-Token", "03fa252b-40f2-4356-a6f6-1df35bf5314f");
+
+xhr.send(data);
+    }
+
+    function mostrarDatos(response) {
+      console.log(response)
+    }
+    get("/lol/summoner/v4/summoners/by-name/pantoja2", mostrarDatos);
+
+    // api-key: RGAPI-e5f6010f-404b-438b-8f68-76f034dfa4a6
+  </script>
+</body>
+</html>
