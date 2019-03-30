@@ -31,7 +31,21 @@
     function mostrarDatos(response) {
       console.log(response)
     }
-    get("/lol/summoner/v4/summoners/by-name/pantoja2", mostrarDatos);
+
+    function get2(url) {
+      var api = "https://hidden-badlands-27037.herokuapp.com"
+      var xhttp = new XMLHttpRequest();
+      xhttp.withCredentials = true;
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          cb(this.response);
+        }
+      }
+      xhttp.open("GET", api+url);
+      xhttp.send(null);
+    }
+    get2("/", mostrarDatos);
+
 
     // api-key: RGAPI-e5f6010f-404b-438b-8f68-76f034dfa4a6
   </script>
