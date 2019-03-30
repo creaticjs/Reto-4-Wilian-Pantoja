@@ -6,8 +6,10 @@ header('Content-Type: application/json');
 
 $curl = curl_init();
 
+$url = $_GET['url'];
+
 curl_setopt_array($curl, array(
-  CURLOPT_URL => "https://la1.api.riotgames.com/lol/summoner/v4/summoners/by-name/pantoja2?api_key=RGAPI-e5f6010f-404b-438b-8f68-76f034dfa4a6",
+  CURLOPT_URL => "https://la1.api.riotgames.com".$url."?api_key=RGAPI-e5f6010f-404b-438b-8f68-76f034dfa4a6",
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_ENCODING => "",
   CURLOPT_MAXREDIRS => 10,

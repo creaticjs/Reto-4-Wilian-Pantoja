@@ -7,48 +7,47 @@
   <title>Document</title>
 </head>
 <body>
+  <div>id: <div id="id"></div></div>
+  <br>
+  <div>accountId: <div id="accountId"></div></div>
+  <br>
+  <div>puuid: <div id="puuid"></div></div>
+  <br>
+  <div>name: <div id="name"></div></div>
+  <br>
+  <div>profileIconId: <div id="profileIconId"></div></div>
+  <br>
+  <div>revisionDate: <div id="revisionDate"></div></div>
+  <br>
+  <div>summonerLevel: <div id="summonerLevel"></div></div>
+  <br>
+  
   <script>
-    var usuario;
-    
-    function get(url, cb) {
-      var api = "https://la1.api.riotgames.com"
-      var apiKey = "?api_key=RGAPI-e5f6010f-404b-438b-8f68-76f034dfa4a6";
-      var xhttp = new XMLHttpRequest();
-      xhttp.withCredentials = true;
-      xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-          cb(this.response);
-        }
-      }
-      xhttp.open("GET", api+url+apiKey)
-      //xhttp.setRequestHeader("X-Riot-Token", "RGAPI-e5f6010f-404b-438b-8f68-76f034dfa4a6");
-      console.log(xhttp)
-      xhttp.setRequestHeader("cache-control", "no-cache");
-      xhttp.setRequestHeader("Postman-Token", "a0b14afd-da2e-492a-ab2b-e1518ae53ff0");
-      xhttp.send(null);
-    }
-
     function mostrarDatos(response) {
       console.log(response)
+      var res = JSON.parse(response);
+      document.getElementById("id").innerHTML = res.id;
+      document.getElementById("accountId").innerHTML = res.accountId;
+      document.getElementById("puuid").innerHTML = res.puuid;
+      document.getElementById("name").innerHTML = res.name;
+      document.getElementById("profileIconId").innerHTML = res.profileIconId;
+      document.getElementById("revisionDate").innerHTML = res.revisionDate;
+      document.getElementById("summonerLevel").innerHTML = res.summonerLevel;
     }
 
-    function get2(url) {
+    function get2(url, cb) {
       var api = "https://hidden-badlands-27037.herokuapp.com"
       var xhttp = new XMLHttpRequest();
-      xhttp.withCredentials = true;
+      xhttp.withCredentials = false;
       xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
           cb(this.response);
         }
       }
       xhttp.open("GET", api+url);
-      xhttp.setRequestHeader("Access-Control-Allow-Origin", "*");
       xhttp.send(null);
     }
-    get2("/", mostrarDatos);
-
-
-    // api-key: RGAPI-e5f6010f-404b-438b-8f68-76f034dfa4a6
+    get2("/?url=/lol/summoner/v4/summoners/by-name/pantoja2", mostrarDatos);
   </script>
 </body>
 </html>
