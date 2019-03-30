@@ -23,22 +23,6 @@
       //xhttp.setRequestHeader("X-Riot-Token", "RGAPI-e5f6010f-404b-438b-8f68-76f034dfa4a6");
       console.log(xhttp)
       xhttp.send();
-
-      var data = null;
-
-var xhr = new XMLHttpRequest();
-xhr.withCredentials = true;
-
-xhr.addEventListener("readystatechange", function () {
-  if (this.readyState === 4) {
-    console.log(this.responseText);
-  }
-});
-
-xhr.open("GET", "https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/RiotSchmick?api_key=RGAPI-e5f6010f-404b-438b-8f68-76f034dfa4a6");
-xhr.setRequestHeader("cache-control", "no-cache");
-
-xhr.send(data);
     }
 
     function mostrarDatos(response) {
