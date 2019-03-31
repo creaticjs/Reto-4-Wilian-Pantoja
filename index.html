@@ -1,53 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
-</head>
-<body>
-  <div>id: <div id="id"></div></div>
-  <br>
-  <div>accountId: <div id="accountId"></div></div>
-  <br>
-  <div>puuid: <div id="puuid"></div></div>
-  <br>
-  <div>name: <div id="name"></div></div>
-  <br>
-  <div>profileIconId: <div id="profileIconId"></div></div>
-  <br>
-  <div>revisionDate: <div id="revisionDate"></div></div>
-  <br>
-  <div>summonerLevel: <div id="summonerLevel"></div></div>
-  <br>
-  
-  <script>
-    function mostrarDatos(response) {
-      console.log(response)
-      var res = JSON.parse(response);
-      document.getElementById("id").innerHTML = res.id;
-      document.getElementById("accountId").innerHTML = res.accountId;
-      document.getElementById("puuid").innerHTML = res.puuid;
-      document.getElementById("name").innerHTML = res.name;
-      document.getElementById("profileIconId").innerHTML = res.profileIconId;
-      document.getElementById("revisionDate").innerHTML = res.revisionDate;
-      document.getElementById("summonerLevel").innerHTML = res.summonerLevel;
-    }
 
-    function get2(url, cb) {
-      var api = "https://hidden-badlands-27037.herokuapp.com"
-      var xhttp = new XMLHttpRequest();
-      xhttp.withCredentials = false;
-      xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-          cb(this.response);
-        }
-      }
-      xhttp.open("GET", api+url);
-      xhttp.send(null);
-    }
-    get2("/?url=/lol/summoner/v4/summoners/by-name/pantoja2", mostrarDatos);
-  </script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/preflight.min.css" rel="stylesheet">
+  <!-- Any of your own CSS would go here -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/utilities.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/index.js"></script>
+
+</head>
+
+<body>
+  <div class="min-h-screen">
+    <div class="flex flex-col w-full fixed pin-l pin-y">
+      <nav class="flex items-center justify-between flex-wrap bg-teal p-6">
+        <div class="flex items-center flex-no-shrink text-white mr-6">
+          <svg class="h-8 w-8 mr-2" width="54" height="54" viewBox="0 0 54 54" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M13.5 22.1c1.8-7.2 6.3-10.8 13.5-10.8 10.8 0 12.15 8.1 17.55 9.45 3.6.9 6.75-.45 9.45-4.05-1.8 7.2-6.3 10.8-13.5 10.8-10.8 0-12.15-8.1-17.55-9.45-3.6-.9-6.75.45-9.45 4.05zM0 38.3c1.8-7.2 6.3-10.8 13.5-10.8 10.8 0 12.15 8.1 17.55 9.45 3.6.9 6.75-.45 9.45-4.05-1.8 7.2-6.3 10.8-13.5 10.8-10.8 0-12.15-8.1-17.55-9.45-3.6-.9-6.75.45-9.45 4.05z">
+            </path>
+          </svg>
+          <span class="font-semibold text-xl tracking-tight">Cliente del API de LOL</span>
+        </div>
+        <div class="w-full flex-grow lg:flex lg:items-center lg:w-auto">
+          <div class="text-sm lg:flex-grow">
+            <button class="mt-4 lg:inline-block lg:mt-0 text-teal-lighter hover:text-white mr-4"
+              onclick="menuBuscarUsuario()">
+              Buscar usuario
+            </button>
+            <button class="mt-4 lg:inline-block lg:mt-0 text-teal-lighter hover:text-white mr-4"
+              onclick="menuRotaciones()">
+              Rotaciones
+            </button>
+            <button class="mt-4 lg:inline-block lg:mt-0 text-teal-lighter hover:text-white mr-4"
+              onclick="juegosDestacados()">
+              Juegos Destacados
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <div class="px-4 pt-4 flex-1 overflow-y-scroll">
+        <div id="menu-buscar-usuario" class="container mx-auto">
+          <h1>Cliente de API de League of Legends</h1>
+          <p>Buscar el usuario en la region de Latinoamerica Norte.</p>
+          <form class="w-full max-w-sm">
+            <div class="flex items-center border-b border-b-2 border-teal py-2">
+              <input id="usuario"
+                class="appearance-none bg-transparent border-none w-full text-grey-darker mr-3 py-1 px-2 leading-tight focus:outline-none"
+                type="text" placeholder="Usuario de League of Legends" aria-label="Full name">
+              <button
+                class="flex-no-shrink bg-teal hover:bg-teal-dark border-teal hover:border-teal-dark text-sm border-4 text-white py-1 px-2 rounded"
+                type="button" onclick="buscarUsuario()">
+                Buscar
+              </button>
+            </div>
+          </form>
+          <div>id: <div id="id"></div>
+          </div>
+          <br>
+          <div>accountId: <div id="accountId"></div>
+          </div>
+          <br>
+          <div>puuid: <div id="puuid"></div>
+          </div>
+          <br>
+          <div>name: <div id="name"></div>
+          </div>
+          <br>
+          <div>profileIconId: <div id="profileIconId"></div>
+          </div>
+          <br>
+          <div>revisionDate: <div id="revisionDate"></div>
+          </div>
+          <br>
+          <div>summonerLevel: <div id="summonerLevel"></div>
+          </div>
+          <br>
+          <br>
+          <div class="container mx-auto px-4">
+            <button
+              class="bg-blue hover:bg-blue-light text-white font-bold py-2 px-4 border-b-4 border-blue-dark hover:border-blue rounded"
+              onclick="buscarMaestrias()">
+              Buscar Maestrías
+            </button>
+            <button
+              class="bg-blue hover:bg-blue-light text-white font-bold py-2 px-4 border-b-4 border-blue-dark hover:border-blue rounded"
+              onclick="buscarPartidas()">
+              Historial de Partidas
+            </button>
+            <button
+              class="bg-blue hover:bg-blue-light text-white font-bold py-2 px-4 border-b-4 border-blue-dark hover:border-blue rounded"
+              onclick="buscarPosicion()">
+              Posición
+            </button>
+          </div>
+          <div class="container mx-auto px-4">
+            <div id="maestrias"></div>
+            <div id="historial"></div>
+            <div id="posicion"></div>
+          </div>
+          <br>
+        </div>
+
+
+        <div id="menu-rotaciones" class="container mx-auto" style="display: none;">
+          <h1>Rotaciones de campeones</h1>
+          <h2>Campeones Gratuitos</h2>
+          <h2>Campeones Gratuitos para usuarios nuevos</h2>
+          <div id="rotaciones"></div>
+        </div>
+
+
+        <div id="menu-juegos-destacados" class="container mx-auto" style="display: none;">
+          <h1>Juegos destacados</h1>
+          <div id="juegos-destacados"></div>
+        </div>
+
+
+
+
+      </div>
+
+      <div class="border-t border-smoke px-8 py-4">
+        <div class="flex justify-center text-grey">
+          Ing Wilian Pantoja
+        </div>
+      </div>
+
+    </div>
+  </div>
 </body>
+
 </html>

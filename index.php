@@ -7,6 +7,7 @@ header('Content-Type: application/json');
 $curl = curl_init();
 
 $url = $_GET['url'];
+error_log($url);
 
 curl_setopt_array($curl, array(
   CURLOPT_URL => "https://la1.api.riotgames.com".$url."?api_key=RGAPI-e5f6010f-404b-438b-8f68-76f034dfa4a6",
@@ -18,7 +19,7 @@ curl_setopt_array($curl, array(
   CURLOPT_CUSTOMREQUEST => "GET",
   CURLOPT_POSTFIELDS => "",
   CURLOPT_HTTPHEADER => array(
-    "Postman-Token: f57785c4-7fe6-49ac-b6bd-ec70fdb1d27b",
+    // "Postman-Token: f57785c4-7fe6-49ac-b6bd-ec70fdb1d27b",
     "cache-control: no-cache"
   ),
 ));
