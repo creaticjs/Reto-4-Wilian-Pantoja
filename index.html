@@ -12,6 +12,8 @@
   <!-- Any of your own CSS would go here -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/utilities.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E=" crossorigin="anonymous"></script>
   <script src="js/index.js"></script>
 
 </head>
@@ -62,29 +64,17 @@
               </button>
             </div>
           </form>
-          <div>id: <div id="id"></div>
+          <div class="flex items-center py-4">
+            <img class="w-10 h-10 rounded-full mr-4" src="https://tailwindcss.com/img/jonathan.jpg"
+              alt="Avatar of Jonathan Reinink">
+            <div class="text-sm">
+              <p id="profileIconId" class="text-black leading-none"></p>
+              <p id="name" class="text-black leading-none"></p>
+              <p id="summonerLevel" class="text-grey-dark"></p>
+            </div>
           </div>
-          <br>
-          <div>accountId: <div id="accountId"></div>
-          </div>
-          <br>
-          <div>puuid: <div id="puuid"></div>
-          </div>
-          <br>
-          <div>name: <div id="name"></div>
-          </div>
-          <br>
-          <div>profileIconId: <div id="profileIconId"></div>
-          </div>
-          <br>
-          <div>revisionDate: <div id="revisionDate"></div>
-          </div>
-          <br>
-          <div>summonerLevel: <div id="summonerLevel"></div>
-          </div>
-          <br>
-          <br>
-          <div class="container mx-auto px-4">
+
+          <div class="container mx-auto px-4 py-4">
             <button
               class="bg-blue hover:bg-blue-light text-white font-bold py-2 px-4 border-b-4 border-blue-dark hover:border-blue rounded"
               onclick="buscarMaestrias()">
@@ -101,7 +91,8 @@
               Posición
             </button>
           </div>
-          <div class="container mx-auto px-4">
+
+          <div class="container mx-auto px-4" style="display: block;">
             <div id="maestrias"></div>
             <div id="historial"></div>
             <div id="posicion"></div>
@@ -109,23 +100,18 @@
           <br>
         </div>
 
-
         <div id="menu-rotaciones" class="container mx-auto" style="display: none;">
           <h1>Rotaciones de campeones</h1>
           <h2>Campeones Gratuitos</h2>
+          <div id="rotacionesGratuitos"></div>
           <h2>Campeones Gratuitos para usuarios nuevos</h2>
-          <div id="rotaciones"></div>
+          <div id="rotacionesGratuitosNuevos"></div>
         </div>
-
 
         <div id="menu-juegos-destacados" class="container mx-auto" style="display: none;">
           <h1>Juegos destacados</h1>
           <div id="juegos-destacados"></div>
         </div>
-
-
-
-
       </div>
 
       <div class="border-t border-smoke px-8 py-4">

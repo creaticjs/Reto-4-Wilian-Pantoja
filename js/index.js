@@ -37,7 +37,24 @@ function menuRotaciones() {
   document.getElementById("menu-juegos-destacados").style.display = "none";
   get("/?url=/lol/platform/v3/champion-rotations")
     .then(res => {
-      document.getElementById("rotaciones").innerHTML = res;
+      let rotaciones = JSON.parse(res);
+      let rotacionesGratuitos = rotaciones.freeChampionIds;
+      let rotacionesGratuitosNuevos = rotaciones.freeChampionIdsForNewPlayers;
+      getNativo("/rotaciones.html")
+        .then(res => {
+          rotacionesGratuitos.map(r => {
+            let html = $(res);
+            html.find("#championId").text(r);
+            $("#rotacionesGratuitos").append(html);
+            $("#rotacionesGratuitos").append($("<br>"));
+          });
+          rotacionesGratuitosNuevos.map(r => {
+            let html = $(res);
+            html.find("#championId").text(r);
+            $("#rotacionesGratuitosNuevos").append(html);
+            $("#rotacionesGratuitosNuevos").append($("<br>"));
+          });
+        });
     })
     .catch(error => {
       console.error(error);
@@ -49,28 +66,52 @@ function juegosDestacados() {
   document.getElementById("menu-buscar-usuario").style.display = "none";
   document.getElementById("menu-rotaciones").style.display = "none";
   document.getElementById("menu-juegos-destacados").style.display = "block";
-  refrescarJuegosDestacados({
-    clientRefreshInterval: 0
-  });
+  refrescarJuegosDestacados(0);
 }
 
-function refrescarJuegosDestacados(respuesta) {
+function refrescarJuegosDestacados(clientRefreshInterval) {
   if (refrescar) {
     setTimeout(() => {
+      let respuesta;
       get("/?url=/lol/spectator/v4/featured-games")
         .then(res => {
-          let respuesta = JSON.parse(res);
-          document.getElementById("juegos-destacados").innerHTML = res;
-          refrescarJuegosDestacados(respuesta);
+          respuesta = JSON.parse(res);
+          return getNativo("/juegos-destacados.html");
+        })
+        .then(res=>{
+          respuesta.gameList.map(g=>{
+            let html = $(res);
+            html.find("#gameMode").text(g.gameMode);
+            $("#juegos-destacados").append(html);
+            $("#juegos-destacados").append($("<br>"));
+          })
+          refrescarJuegosDestacados(respuesta.clientRefreshInterval + 10000);
         })
         .catch(error => {
           console.error(error);
         });
-    }, respuesta.clientRefreshInterval);
+    }, clientRefreshInterval);
   }
 }
 
-function get(url, cb) {
+function getNativo(url) {
+  return new Promise((resolve, reject) => {
+    var xhttp = new XMLHttpRequest();
+    xhttp.withCredentials = false;
+    xhttp.onreadystatechange = function () {
+      if (this.readyState == 4)
+        if (this.status == 200) {
+          resolve(this.response);
+        } else {
+          reject(this.response);
+        }
+    }
+    xhttp.open("GET", url);
+    xhttp.send(null);
+  });
+}
+
+function get(url) {
   return new Promise((resolve, reject) => {
     var api = "https://hidden-badlands-27037.herokuapp.com"
     var xhttp = new XMLHttpRequest();
@@ -99,13 +140,8 @@ function buscarUsuario() {
       console.log(response)
       var res = JSON.parse(response);
       usuario = res;
-      document.getElementById("id").innerHTML = res.id;
-      document.getElementById("accountId").innerHTML = res.accountId;
-      document.getElementById("puuid").innerHTML = res.puuid;
       document.getElementById("name").innerHTML = res.name;
       document.getElementById("profileIconId").innerHTML = '<img src="http://ddragon.leagueoflegends.com/cdn/6.24.1/img/profileicon/' + res.profileIconId + '.png?api_key=RGAPI-e5f6010f-404b-438b-8f68-76f034dfa4a6" alt="profileIconId" />';
-
-      document.getElementById("revisionDate").innerHTML = res.revisionDate;
       document.getElementById("summonerLevel").innerHTML = res.summonerLevel;
     })
     .catch(error => {
@@ -114,10 +150,26 @@ function buscarUsuario() {
 }
 
 function buscarMaestrias() {
+  let maestrias;
   get("/?url=/lol/champion-mastery/v4/champion-masteries/by-summoner/" + usuario.id)
     .then(res => {
       limpiar();
-      document.getElementById("maestrias").innerHTML = res;
+      maestrias = JSON.parse(res);
+      return getNativo("/maestrias.html");
+    })
+    .then(res => {
+      maestrias.map(m => {
+        let html = $(res);
+        html.find("#championId").text(m.championId);
+        html.find("#championPoints").text(m.championPoints);
+        html.find("#championLevel").text(m.championLevel);
+        html.find("#lastPlayTime").text(new Date(m.lastPlayTime).toDateString());
+        html.find("#chestGranted").text(m.chestGranted);
+        html.find("#championPointsSinceLastLevel").text(m.championPointsSinceLastLevel);
+        html.find("#championPointsUntilNextLevel").text(m.championPointsUntilNextLevel);
+        $("#maestrias").append(html);
+        $("#maestrias").append($("<br>"));
+      })
     })
     .catch(error => {
       console.error(error);
@@ -125,10 +177,24 @@ function buscarMaestrias() {
 }
 
 function buscarPartidas() {
+  let matches;
   get("/?url=/lol/match/v4/matchlists/by-account/" + usuario.accountId)
     .then(res => {
       limpiar();
-      document.getElementById("historial").innerHTML = res;
+      matches = (JSON.parse(res)).matches;
+      return getNativo("/matches.html");
+    })
+    .then(res => {
+      matches.map(m => {
+        let html = $(res);
+        html.find("#season").text(m.season);
+        html.find("#champion").text(m.champion);
+        html.find("#role").text(m.role);
+        html.find("#timestamp").text(new Date(m.timestamp).toDateString());
+        html.find("#lane").text(m.lane);
+        $("#historial").append(html);
+        $("#historial").append($("<br>"));
+      });
     })
     .catch(error => {
       console.error(error);
@@ -141,18 +207,32 @@ function buscarPosicion() {
       posiciones = JSON.parse(res);
       console.log(posicion)
       limpiar();
-      let dom = "";
-      for (let i = 0; i < posiciones.length; i++) {
+      return getNativo("/posiciones.html");
+      /*
         dom += `
         <div class="container mx-auto px-4">
           <button class="bg-blue hover:bg-blue-light text-white font-bold py-2 px-4 border-b-4 border-blue-dark hover:border-blue rounded"
           onclick="buscarLiga('${posiciones[i].leagueId}')">Ver liga</button>
           <div id="liga${posiciones[i].leagueId}"></div>
         </div>
-        `;
+        `
+*/
+    })
+    .then(res => {
+      for (let i = 0; i < posiciones.length; i++) {
+        let p = posiciones[i];
+        let html = $(res);
+        html.find("#leagueName").text(p.leagueName);
+        html.find("#wins").text(p.wins);
+        html.find("#losses").text(p.losses);
+        html.find("#tier").text(p.tier);
+        html.find("#rank").text(p.rank);
+        html.find("#queueType").text(p.queueType);
+        html.find("#btnVerLiga").on('click', buscarLiga(p.leagueId));
+        $("#posicion").append(html);
+        $("#posicion").append($("<br>"));
       }
-      document.getElementById("posicion").innerHTML = res + dom;
-
+      $("#posicion").append(`<div id="liga"></div>`);
     })
     .catch(error => {
       console.error(error);
@@ -160,13 +240,29 @@ function buscarPosicion() {
 }
 
 function buscarLiga(leagueId) {
-  get("/?url=/lol/league/v4/leagues/" + leagueId)
-    .then(res => {
-      document.getElementById("liga"+leagueId).innerHTML = res;
-    })
-    .catch(error => {
-      console.error(error);
-    });
+  return () => {
+    let entries;
+    get("/?url=/lol/league/v4/leagues/" + leagueId)
+      .then(res => {
+        entries = JSON.parse(res).entries;
+        return getNativo("/liga.html");
+      })
+      .then(res => {
+        entries.map(e => {
+          let html = $(res);
+          html.find("#summonerName").text(e.summonerName);
+          html.find("#leaguePoints").text(e.leaguePoints);
+          html.find("#rank").text(e.rank);
+          html.find("#wins").text(e.wins);
+          html.find("#losses").text(e.losses);
+          $("#liga").append(html);
+        });
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
+
 }
 
 function limpiar() {

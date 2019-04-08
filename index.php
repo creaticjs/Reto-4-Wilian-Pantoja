@@ -10,8 +10,10 @@ $url = $_GET['url'];
 error_log($url);
 error_log(urlencode($url));
 
+$api_key = "RGAPI-0d766692-5235-446d-a97c-aa8f4c83e199";
+
 curl_setopt_array($curl, array(
-  CURLOPT_URL => "https://la1.api.riotgames.com".$url."?api_key=RGAPI-41c4933f-c5e1-42da-a6b7-f2c030a36500",
+  CURLOPT_URL => "https://la1.api.riotgames.com".$url."?api_key=".$api_key,
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_ENCODING => "",
   CURLOPT_MAXREDIRS => 10,
