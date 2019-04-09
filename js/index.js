@@ -1,3 +1,6 @@
+
+var usuario, posiciones, refrescar = false, campeones;
+
 function elem(id) {
   return document.getElementById(id);
 }
@@ -44,13 +47,23 @@ function menuRotaciones() {
         .then(res => {
           rotacionesGratuitos.map(r => {
             let html = $(res);
-            html.find("#championId").text(r);
+            let champ = campeon(r);
+            if (!champ) {
+              return;
+            }
+            html.find("#championImg").append($(`<img src="http://ddragon.leagueoflegends.com/cdn/img/champion/loading/${champ.id}_0.jpg" style="height: 45vh;" alt="Background ${champ.name}"/>`));
+            html.find("#championId").text(champ.name);
             $("#rotacionesGratuitos").append(html);
             $("#rotacionesGratuitos").append($("<br>"));
           });
           rotacionesGratuitosNuevos.map(r => {
             let html = $(res);
-            html.find("#championId").text(r);
+            let champ = campeon(r);
+            if (!champ) {
+              return;
+            }
+            html.find("#championImg").append($(`<img src="http://ddragon.leagueoflegends.com/cdn/img/champion/loading/${champ.id}_0.jpg" style="height: 45vh;" alt="Background ${champ.name}"/>`));
+            html.find("#championId").text(champ.name);
             $("#rotacionesGratuitosNuevos").append(html);
             $("#rotacionesGratuitosNuevos").append($("<br>"));
           });
@@ -81,7 +94,9 @@ function refrescarJuegosDestacados(clientRefreshInterval) {
         .then(res=>{
           respuesta.gameList.map(g=>{
             let html = $(res);
+            
             html.find("#gameMode").text(g.gameMode);
+            html.find("#gameStartTime").text("Inicio de partida: " + new Date(g.gameStartTime).toDateString());
             $("#juegos-destacados").append(html);
             $("#juegos-destacados").append($("<br>"));
           })
@@ -129,8 +144,6 @@ function get(url) {
   });
 }
 
-var usuario, posiciones, refrescar = false;
-
 function buscarUsuario() {
   let nombreUsuario = encodeURI(v("usuario"));
   console.log(nombreUsuario)
@@ -141,8 +154,8 @@ function buscarUsuario() {
       var res = JSON.parse(response);
       usuario = res;
       document.getElementById("name").innerHTML = res.name;
-      document.getElementById("profileIconId").innerHTML = '<img src="http://ddragon.leagueoflegends.com/cdn/6.24.1/img/profileicon/' + res.profileIconId + '.png?api_key=RGAPI-e5f6010f-404b-438b-8f68-76f034dfa4a6" alt="profileIconId" />';
-      document.getElementById("summonerLevel").innerHTML = res.summonerLevel;
+      document.getElementById("profileIconId").innerHTML = '<img src="http://ddragon.leagueoflegends.com/cdn/6.24.1/img/profileicon/' + res.profileIconId + '.png" alt="profileIconId" />';
+      document.getElementById("summonerLevel").innerHTML = "Nivel "+ res.summonerLevel;
     })
     .catch(error => {
       console.error(error);
@@ -160,13 +173,19 @@ function buscarMaestrias() {
     .then(res => {
       maestrias.map(m => {
         let html = $(res);
-        html.find("#championId").text(m.championId);
-        html.find("#championPoints").text(m.championPoints);
-        html.find("#championLevel").text(m.championLevel);
-        html.find("#lastPlayTime").text(new Date(m.lastPlayTime).toDateString());
-        html.find("#chestGranted").text(m.chestGranted);
-        html.find("#championPointsSinceLastLevel").text(m.championPointsSinceLastLevel);
-        html.find("#championPointsUntilNextLevel").text(m.championPointsUntilNextLevel);
+        let champ = campeon(m.championId);
+        if (!champ) {
+          return;
+        }
+        
+        html.find("#championImg").append($(`<img src="http://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champ.id}_0.jpg" alt="Background ${champ.name}"/>`));
+        html.find("#championId").text(champ.name);
+        html.find("#championPoints").text("Puntos de maestría: " + m.championPoints);
+        html.find("#championLevel").text("Nivel de Campeón: "+m.championLevel);
+        html.find("#lastPlayTime").text("Jugado última vez: " + new Date(m.lastPlayTime).toDateString());
+        html.find("#chestGranted").text(m.chestGranted ? "Cofre otorgado" : "Aún no tiene cofre");
+        html.find("#championPointsSinceLastLevel").text("Puntos desde la última vez: " +  m.championPointsSinceLastLevel);
+        html.find("#championPointsUntilNextLevel").text("Puntos hasta el siguiente nivel: " + m.championPointsUntilNextLevel);
         $("#maestrias").append(html);
         $("#maestrias").append($("<br>"));
       })
@@ -187,11 +206,17 @@ function buscarPartidas() {
     .then(res => {
       matches.map(m => {
         let html = $(res);
-        html.find("#season").text(m.season);
-        html.find("#champion").text(m.champion);
-        html.find("#role").text(m.role);
-        html.find("#timestamp").text(new Date(m.timestamp).toDateString());
-        html.find("#lane").text(m.lane);
+        let champ = campeon(m.champion);
+        if (!champ) {
+          return;
+        }
+
+        html.find("#championImg").css('background-image', `url(\'http://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champ.id}_0.jpg\')`);
+        html.find("#season").text("Temporada: "+m.season);
+        html.find("#champion").text(champ.name);
+        html.find("#role").text("Rol: "+m.role);
+        html.find("#timestamp").text("Partida jugada el: " + new Date(m.timestamp).toDateString());
+        html.find("#lane").text("Línea: " + m.lane);
         $("#historial").append(html);
         $("#historial").append($("<br>"));
       });
@@ -208,26 +233,17 @@ function buscarPosicion() {
       console.log(posicion)
       limpiar();
       return getNativo("/posiciones.html");
-      /*
-        dom += `
-        <div class="container mx-auto px-4">
-          <button class="bg-blue hover:bg-blue-light text-white font-bold py-2 px-4 border-b-4 border-blue-dark hover:border-blue rounded"
-          onclick="buscarLiga('${posiciones[i].leagueId}')">Ver liga</button>
-          <div id="liga${posiciones[i].leagueId}"></div>
-        </div>
-        `
-*/
     })
     .then(res => {
       for (let i = 0; i < posiciones.length; i++) {
         let p = posiciones[i];
         let html = $(res);
-        html.find("#leagueName").text(p.leagueName);
-        html.find("#wins").text(p.wins);
-        html.find("#losses").text(p.losses);
-        html.find("#tier").text(p.tier);
-        html.find("#rank").text(p.rank);
-        html.find("#queueType").text(p.queueType);
+        html.find("#leagueName").text("Nombre de liga: "+p.leagueName);
+        html.find("#wins").text("Victorias: " + p.wins);
+        html.find("#losses").text("Derrotas " + p.losses);
+        html.find("#tier").text("Tier: "+p.tier);
+        html.find("#rank").text("Rango: "+p.rank);
+        html.find("#queueType").text("Tipo de cola: "+p.queueType);
         html.find("#btnVerLiga").on('click', buscarLiga(p.leagueId));
         $("#posicion").append(html);
         $("#posicion").append($("<br>"));
@@ -251,11 +267,12 @@ function buscarLiga(leagueId) {
         entries.map(e => {
           let html = $(res);
           html.find("#summonerName").text(e.summonerName);
-          html.find("#leaguePoints").text(e.leaguePoints);
-          html.find("#rank").text(e.rank);
-          html.find("#wins").text(e.wins);
-          html.find("#losses").text(e.losses);
+          html.find("#leaguePoints").text("Puntos: "+ e.leaguePoints);
+          html.find("#rank").text("Rango: "+e.rank);
+          html.find("#wins").text("Victorias: "+e.wins);
+          html.find("#losses").text("Derrotas: " + e.losses);
           $("#liga").append(html);
+          $("#liga").append($("<br>"));
         });
       })
       .catch(error => {
@@ -270,3 +287,19 @@ function limpiar() {
   document.getElementById("historial").innerHTML = "";
   document.getElementById("posicion").innerHTML = "";
 }
+
+function campeon(key) {
+  for (let campeon of Object.values(campeones.data)) {
+    if (campeon.key == key) {
+      return campeon;
+    }
+  }
+  return null;
+}
+
+getNativo("/json/champion.json")
+.then(res => {
+  campeones = JSON.parse(res);
+}).catch(err=>{
+  console.error(err);
+});
