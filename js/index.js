@@ -82,6 +82,23 @@ function juegosDestacados() {
   refrescarJuegosDestacados(0);
 }
 
+function htmlJugadorEquipo(data) {
+  let champ = campeon(data.championId);
+  if (!champ) {
+    return;
+  }
+  return `
+    <div class="flex items-center m-2">
+      <img class="w-10 h-10 rounded-full mr-4" src="http://ddragon.leagueoflegends.com/cdn/9.7.1/img/profileicon/${data.profileIconId}.png" alt="profileIconId" />
+      <div class="text-sm w-full">
+        <p class="text-black leading-none">${data.summonerName}</p>
+        <p class="text-grey-dark">${champ.name}</p>
+      </div>
+      <img style="height: 3.2rem;" src="http://ddragon.leagueoflegends.com/cdn/img/champion/loading/${champ.id}_0.jpg" alt="Avatar of Champion">
+    </div>
+  `;
+}
+
 function refrescarJuegosDestacados(clientRefreshInterval) {
   if (refrescar) {
     setTimeout(() => {
@@ -92,11 +109,22 @@ function refrescarJuegosDestacados(clientRefreshInterval) {
           return getNativo("/juegos-destacados.html");
         })
         .then(res=>{
+          $("#juegos-destacados").html("");
           respuesta.gameList.map(g=>{
             let html = $(res);
             
+            html.find("#mapId").append($(`<img src="http://ddragon.leagueoflegends.com/cdn/6.24.1/img/map/map${g.mapId}.png" alt="bgk" style="height: 30vh;" />`));
             html.find("#gameMode").text(g.gameMode);
             html.find("#gameStartTime").text("Inicio de partida: " + new Date(g.gameStartTime).toDateString());
+            let platform = getPlatformData(g.platformId);
+            html.find("#comando").text(`Carpeta: C:/Riot Games/League of Legends/RADS/projects/league_client/releases/0.0.0.195/deploy/\n./LeagueClient.exe 8394 "LeagueClient.exe" "/path" "spectator ${platform.domain}:${platform.port} ${g.observers.encryptionKey} ${g.gameId} ${g.platformId}"`);
+            
+            for (let e = "1", i = 0; i < 10; i ++) {
+              if (i == 5) {
+                e = "2"
+              }
+              html.find("#equipo"+e).append($(htmlJugadorEquipo(g.participants[i])));
+            }
             $("#juegos-destacados").append(html);
             $("#juegos-destacados").append($("<br>"));
           })
@@ -107,6 +135,24 @@ function refrescarJuegosDestacados(clientRefreshInterval) {
         });
     }, clientRefreshInterval);
   }
+}
+
+function getPlatformData(platformId) {
+  let platforms = {
+   	NA1: { domain: "spectator.na.lol.riotgames.com", port: "80"},
+    EUW1: { domain: "spectator.euw1.lol.riotgames.com", port: "80"},
+    EUN1: { domain: "spectator.eu.lol.riotgames.com", port: "8088"},
+    JP1: { domain: "spectator.jp1.lol.riotgames.com", port: "80"},
+    KR: { domain: "spectator.kr.lol.riotgames.com", port: "80"},
+    OC1: { domain: "spectator.oc1.lol.riotgames.com", port: "80"},
+    BR1: { domain: "spectator.br.lol.riotgames.com", port: "80"},
+    LA1: { domain: "spectator.la1.lol.riotgames.com", port: "80"},
+    LA2: { domain: "spectator.la2.lol.riotgames.com", port: "80"},
+    RU: { domain: "spectator.ru.lol.riotgames.com", port: "80"},
+    TR1: { domain: "spectator.tr.lol.riotgames.com", port: "80"},
+    PBE1: { domain: "spectator.pbe1.lol.riotgames.com", port: "80"}
+  };
+  return platforms[platformId]
 }
 
 function getNativo(url) {
@@ -154,7 +200,7 @@ function buscarUsuario() {
       var res = JSON.parse(response);
       usuario = res;
       document.getElementById("name").innerHTML = res.name;
-      document.getElementById("profileIconId").innerHTML = '<img src="http://ddragon.leagueoflegends.com/cdn/6.24.1/img/profileicon/' + res.profileIconId + '.png" alt="profileIconId" />';
+      document.getElementById("profileIconId").innerHTML = '<img src="http://ddragon.leagueoflegends.com/cdn/9.7.1/img/profileicon/' + res.profileIconId + '.png" alt="profileIconId" />';
       document.getElementById("summonerLevel").innerHTML = "Nivel "+ res.summonerLevel;
     })
     .catch(error => {
