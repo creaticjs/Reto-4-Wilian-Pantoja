@@ -1,5 +1,5 @@
-
-var usuario, posiciones, refrescar = false, campeones;
+var usuario, posiciones, refrescar = false,
+  campeones;
 
 function elem(id) {
   return document.getElementById(id);
@@ -108,22 +108,22 @@ function refrescarJuegosDestacados(clientRefreshInterval) {
           respuesta = JSON.parse(res);
           return getNativo("/juegos-destacados.html");
         })
-        .then(res=>{
+        .then(res => {
           $("#juegos-destacados").html("");
-          respuesta.gameList.map(g=>{
+          respuesta.gameList.map(g => {
             let html = $(res);
-            
+
             html.find("#mapId").append($(`<img src="http://ddragon.leagueoflegends.com/cdn/6.24.1/img/map/map${g.mapId}.png" alt="bgk" style="height: 30vh;" />`));
             html.find("#gameMode").text(g.gameMode);
             html.find("#gameStartTime").text("Inicio de partida: " + new Date(g.gameStartTime).toDateString());
             let platform = getPlatformData(g.platformId);
             html.find("#comando").text(`Carpeta: C:/Riot Games/League of Legends/RADS/projects/league_client/releases/0.0.0.195/deploy/\n./LeagueClient.exe 8394 "LeagueClient.exe" "/path" "spectator ${platform.domain}:${platform.port} ${g.observers.encryptionKey} ${g.gameId} ${g.platformId}"`);
-            
-            for (let e = "1", i = 0; i < 10; i ++) {
+
+            for (let e = "1", i = 0; i < 10; i++) {
               if (i == 5) {
                 e = "2"
               }
-              html.find("#equipo"+e).append($(htmlJugadorEquipo(g.participants[i])));
+              html.find("#equipo" + e).append($(htmlJugadorEquipo(g.participants[i])));
             }
             $("#juegos-destacados").append(html);
             $("#juegos-destacados").append($("<br>"));
@@ -139,18 +139,54 @@ function refrescarJuegosDestacados(clientRefreshInterval) {
 
 function getPlatformData(platformId) {
   let platforms = {
-   	NA1: { domain: "spectator.na.lol.riotgames.com", port: "80"},
-    EUW1: { domain: "spectator.euw1.lol.riotgames.com", port: "80"},
-    EUN1: { domain: "spectator.eu.lol.riotgames.com", port: "8088"},
-    JP1: { domain: "spectator.jp1.lol.riotgames.com", port: "80"},
-    KR: { domain: "spectator.kr.lol.riotgames.com", port: "80"},
-    OC1: { domain: "spectator.oc1.lol.riotgames.com", port: "80"},
-    BR1: { domain: "spectator.br.lol.riotgames.com", port: "80"},
-    LA1: { domain: "spectator.la1.lol.riotgames.com", port: "80"},
-    LA2: { domain: "spectator.la2.lol.riotgames.com", port: "80"},
-    RU: { domain: "spectator.ru.lol.riotgames.com", port: "80"},
-    TR1: { domain: "spectator.tr.lol.riotgames.com", port: "80"},
-    PBE1: { domain: "spectator.pbe1.lol.riotgames.com", port: "80"}
+    NA1: {
+      domain: "spectator.na.lol.riotgames.com",
+      port: "80"
+    },
+    EUW1: {
+      domain: "spectator.euw1.lol.riotgames.com",
+      port: "80"
+    },
+    EUN1: {
+      domain: "spectator.eu.lol.riotgames.com",
+      port: "8088"
+    },
+    JP1: {
+      domain: "spectator.jp1.lol.riotgames.com",
+      port: "80"
+    },
+    KR: {
+      domain: "spectator.kr.lol.riotgames.com",
+      port: "80"
+    },
+    OC1: {
+      domain: "spectator.oc1.lol.riotgames.com",
+      port: "80"
+    },
+    BR1: {
+      domain: "spectator.br.lol.riotgames.com",
+      port: "80"
+    },
+    LA1: {
+      domain: "spectator.la1.lol.riotgames.com",
+      port: "80"
+    },
+    LA2: {
+      domain: "spectator.la2.lol.riotgames.com",
+      port: "80"
+    },
+    RU: {
+      domain: "spectator.ru.lol.riotgames.com",
+      port: "80"
+    },
+    TR1: {
+      domain: "spectator.tr.lol.riotgames.com",
+      port: "80"
+    },
+    PBE1: {
+      domain: "spectator.pbe1.lol.riotgames.com",
+      port: "80"
+    }
   };
   return platforms[platformId]
 }
@@ -202,7 +238,7 @@ function buscarUsuario() {
       usuario = res;
       document.getElementById("name").innerHTML = res.name;
       document.getElementById("profileIconId").innerHTML = '<img src="http://ddragon.leagueoflegends.com/cdn/9.7.1/img/profileicon/' + res.profileIconId + '.png" alt="profileIconId" />';
-      document.getElementById("summonerLevel").innerHTML = "Nivel "+ res.summonerLevel;
+      document.getElementById("summonerLevel").innerHTML = "Nivel " + res.summonerLevel;
     })
     .catch(error => {
       console.error(error);
@@ -224,14 +260,14 @@ function buscarMaestrias() {
         if (!champ) {
           return;
         }
-        
+
         html.find("#championImg").append($(`<img src="http://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champ.id}_0.jpg" alt="Background ${champ.name}"/>`));
         html.find("#championId").text(champ.name);
         html.find("#championPoints").text("Puntos de maestría: " + m.championPoints);
-        html.find("#championLevel").text("Nivel de Campeón: "+m.championLevel);
+        html.find("#championLevel").text("Nivel de Campeón: " + m.championLevel);
         html.find("#lastPlayTime").text("Jugado última vez: " + new Date(m.lastPlayTime).toDateString());
         html.find("#chestGranted").text(m.chestGranted ? "Cofre otorgado" : "Aún no tiene cofre");
-        html.find("#championPointsSinceLastLevel").text("Puntos desde la última vez: " +  m.championPointsSinceLastLevel);
+        html.find("#championPointsSinceLastLevel").text("Puntos desde la última vez: " + m.championPointsSinceLastLevel);
         html.find("#championPointsUntilNextLevel").text("Puntos hasta el siguiente nivel: " + m.championPointsUntilNextLevel);
         $("#maestrias").append(html);
         $("#maestrias").append($("<br>"));
@@ -259,9 +295,9 @@ function buscarPartidas() {
         }
 
         html.find("#championImg").css('background-image', `url(\'http://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champ.id}_0.jpg\')`);
-        html.find("#season").text("Temporada: "+m.season);
+        html.find("#season").text("Temporada: " + m.season);
         html.find("#champion").text(champ.name);
-        html.find("#role").text("Rol: "+m.role);
+        html.find("#role").text("Rol: " + m.role);
         html.find("#timestamp").text("Partida jugada el: " + new Date(m.timestamp).toDateString());
         html.find("#lane").text("Línea: " + m.lane);
         $("#historial").append(html);
@@ -285,12 +321,12 @@ function buscarPosicion() {
       for (let i = 0; i < posiciones.length; i++) {
         let p = posiciones[i];
         let html = $(res);
-        html.find("#leagueName").text("Nombre de liga: "+p.leagueName);
+        html.find("#leagueName").text("Nombre de liga: " + p.leagueName);
         html.find("#wins").text("Victorias: " + p.wins);
         html.find("#losses").text("Derrotas " + p.losses);
-        html.find("#tier").text("Tier: "+p.tier);
-        html.find("#rank").text("Rango: "+p.rank);
-        html.find("#queueType").text("Tipo de cola: "+p.queueType);
+        html.find("#tier").text("Tier: " + p.tier);
+        html.find("#rank").text("Rango: " + p.rank);
+        html.find("#queueType").text("Tipo de cola: " + p.queueType);
         html.find("#btnVerLiga").on('click', buscarLiga(p.leagueId));
         $("#posicion").append(html);
         $("#posicion").append($("<br>"));
@@ -314,9 +350,9 @@ function buscarLiga(leagueId) {
         entries.map(e => {
           let html = $(res);
           html.find("#summonerName").text(e.summonerName);
-          html.find("#leaguePoints").text("Puntos: "+ e.leaguePoints);
-          html.find("#rank").text("Rango: "+e.rank);
-          html.find("#wins").text("Victorias: "+e.wins);
+          html.find("#leaguePoints").text("Puntos: " + e.leaguePoints);
+          html.find("#rank").text("Rango: " + e.rank);
+          html.find("#wins").text("Victorias: " + e.wins);
           html.find("#losses").text("Derrotas: " + e.losses);
           $("#liga").append(html);
           $("#liga").append($("<br>"));
@@ -345,11 +381,11 @@ function campeon(key) {
 }
 
 getNativo("/json/champion.json")
-.then(res => {
-  campeones = JSON.parse(res);
-}).catch(err=>{
-  console.error(err);
-});
+  .then(res => {
+    campeones = JSON.parse(res);
+  }).catch(err => {
+    console.error(err);
+  });
 
 var recursos = {
   "/rotaciones.html": `<div class="max-w rounded overflow-hidden shadow-lg">
@@ -375,7 +411,7 @@ var recursos = {
     </div>      
   </div>
 </div>`,
-  "/maestrias.html":`<div>
+  "/maestrias.html": `<div>
   <div class="max-w-sm rounded overflow-hidden shadow-lg">
     <div id="championImg" class="w-full"></div>
     <div class="px-6 py-4">
@@ -395,7 +431,7 @@ var recursos = {
     </div>
   </div>
 </div>`,
-"/matches.html": `<div>
+  "/matches.html": `<div>
 <div class="max-w-md w-full lg:flex">
   <div id="championImg"
     class="h-48 lg:h-auto lg:w-48 flex-none bg-cover rounded-t lg:rounded-t-none lg:rounded-l text-center overflow-hidden"
@@ -419,7 +455,7 @@ var recursos = {
   </div>
 </div>
 </div>`,
-"/posiciones.html": `<div>
+  "/posiciones.html": `<div>
 <div class="max-w-sm rounded overflow-hidden shadow-lg">
   <div class="px-6 py-4">
     <div id="leagueName" class="font-bold text-xl mb-2"></div>
@@ -440,7 +476,7 @@ var recursos = {
 </div>
 </div>
 `,
-"/liga.html": `<div>
+  "/liga.html": `<div>
 <div class="max-w-md w-full lg:flex">
   <!-- <div
     class="h-48 lg:h-auto lg:w-48 flex-none bg-cover rounded-t lg:rounded-t-none lg:rounded-l text-center overflow-hidden"
@@ -458,7 +494,7 @@ var recursos = {
   </div>
 </div>
 </div>`,
-  "/json/champion.json" : {
+  "/json/champion.json": {
     "type": "champion",
     "format": "standAloneComplex",
     "version": "6.24.1",
