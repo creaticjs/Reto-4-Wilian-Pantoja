@@ -45,6 +45,7 @@ function menuRotaciones() {
       let rotacionesGratuitosNuevos = rotaciones.freeChampionIdsForNewPlayers;
       getNativo("/rotaciones.html")
         .then(res => {
+          $("#rotacionesGratuitos").append("");
           rotacionesGratuitos.map(r => {
             let html = $(res);
             let champ = campeon(r);
@@ -56,6 +57,8 @@ function menuRotaciones() {
             $("#rotacionesGratuitos").append(html);
             $("#rotacionesGratuitos").append($("<br>"));
           });
+          
+          $("#rotacionesGratuitosNuevos").append("");
           rotacionesGratuitosNuevos.map(r => {
             let html = $(res);
             let champ = campeon(r);
@@ -380,12 +383,7 @@ function campeon(key) {
   return null;
 }
 
-getNativo("/json/champion.json")
-  .then(res => {
-    campeones = JSON.parse(res);
-  }).catch(err => {
-    console.error(err);
-  });
+
 
 var recursos = {
   "/rotaciones.html": `<div class="max-w rounded overflow-hidden shadow-lg">
@@ -6800,3 +6798,10 @@ var recursos = {
     }
   }
 };
+
+getNativo("/json/champion.json")
+  .then(res => {
+    campeones = res;
+  }).catch(err => {
+    console.error(err);
+  });
